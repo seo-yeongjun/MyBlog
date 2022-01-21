@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="topbar">
+    <!-- Push down content on small screens -->
+    <div class="w3-hide-large" style="margin-top:83px"></div>
+
+    <!-- Top header -->
+    <header class="w3-container w3-small">
+        <p class="w3-right">
+            <span><a th:href="@{/login}" th:unless="${login}">로그인</a></span>
+            <span><a th:href="@{/logout}" th:if="${login}">로그아웃</a></span>
+            <span><a th:href="@{/member/join}">회원가입</a></span>
+        </p>
+    </header>
+</th:block>
+
+</html>
