@@ -10,4 +10,5 @@ import com.zanygeek.entity.BlogCategory;
 @Repository
 public interface BlogCategoryRepository extends JpaRepository<BlogCategory, Integer> {
 	public List<BlogCategory> findByBlogManagerId(int blogManagerId);
+	public BlogCategory findByBlogManagerIdAndTitle(int blogManagerId, String categoryTitle);
 }

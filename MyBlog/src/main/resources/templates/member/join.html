@@ -10,7 +10,10 @@
 <body>
     <div id="content">
         <div id="header">
-            <img src="NAVER_CI_Green.png" id="logo"></a>
+            <img src="https://raw.githubusercontent.com/seo-yeongjun/ZanyGeek/81a5293b4db3288fbc2f77bcd6cc71c07a6dca6f/icon/logo.svg"
+                id="logo"></a>
+            <p>ZanyGeek's</p>
+            <p>Toy Blog</p>
         </div>
         <form th:action th:object="${joinForm}" method="post">
             <div>
@@ -25,18 +28,16 @@
             <div>
                 <h3 class="join_title"><label for="password">비밀번호</label></h3>
                 <span class="box int_pass">
-                    <input type="text" th:field="*{password}" class="int" maxlength="20">
-                    <img src="m_icon_pass.png" id="pswd1_img1" class="pswdImg">
+                    <input type="password" th:field="*{password}" class="int" maxlength="20">
                 </span>
                 <span class="error_next_box" th:errors="*{password}"></span>
             </div>
             <div>
                 <h3 class="join_title"><label for="password2">비밀번호 재확인</label></h3>
                 <span class="box int_pass_check">
-                    <input type="text" th:field="*{password2}" class="int" maxlength="20">
-                    <img src="m_icon_check_disable.png" id="pswd2_img1" class="pswdImg">
+                    <input type="password" th:field="*{password2}" class="int" maxlength="20">
                 </span>
-                <span class="error_next_box" th:errors="*{password2}"></span>
+                <span class="error_next_box .pswdImg" th:errors="*{password2}"></span>
             </div>
             <div>
                 <h3 class="join_title"><label for="name">이름</label></h3>
@@ -60,7 +61,7 @@
                 <span class="error_next_box" th:errors="*{title}"></span>
             </div>
             <div class="btn_area">
-                <button id="btnJoin" type="submit">
+                <button class="btnJoin" type="submit">
                     <span>가입하기</span>
                 </button>
             </div>

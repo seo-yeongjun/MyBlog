@@ -1,13 +1,16 @@
 package com.zanygeek.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import com.zanygeek.entity.Member;
 import com.zanygeek.form.JoinForm;
 import com.zanygeek.repository.BlogManagerRepository;
 import com.zanygeek.repository.MemberRepository;
+
 
 @Service
 public class MemberService {
@@ -15,6 +18,8 @@ public class MemberService {
 	MemberRepository memberRepository;
 	@Autowired
 	BlogManagerRepository blogManagerRepository;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	public Boolean error(JoinForm joinForm, BindingResult bindingResult) {
 		if (!memberRepository.findByUserId(joinForm.getMember().getUserId()).isEmpty()) {
@@ -29,4 +34,14 @@ public class MemberService {
 		return bindingResult.hasErrors();
 	}
 
+	public String save(JoinForm joinForm) {
+		blogManagerRepository.save(joinForm.getBlogManager());
+		Member member =joinForm.getMember();
+		String blogTitle = joinForm.getBlogManager().getTitle();
+		String encPassword = passwordEncoder.encode(member.getPassword());
+		member.setPassword(encPassword);
+		member.setBlogManagerId(blogManagerRepository.findByTitle(blogTitle).get().getId());
+		memberRepository.save(member);
+		return blogTitle;
+	}
 }

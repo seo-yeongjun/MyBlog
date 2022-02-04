@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>W3.CSS Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+
+<body class="w3-content" style="max-width:1200px">
+    <th:block th:replace="/blog/fragment/sidebar.html :: sidebar"></th:block>
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:250px; background-color: gray;">
+        <th:block th:replace="/blog/fragment/topbar.html :: topbar"></th:block>
+        <th:block th:replace="/blog/fragment/categoryList.html :: categoryList"></th:block>
+    </div>
+
+    <div class="w3-main w3-row w3-grayscale"
+        style="margin-left:250px; background-color: gray; height:400px; margin-top: 4%;">
+        <div th:text=""></div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/functionEditorAndView.js}"></script>
+
+</body>
+
+</html>

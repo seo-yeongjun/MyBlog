@@ -4,48 +4,64 @@
     <nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="z-index:3;width:250px" id="mySidebar">
         <div class="w3-container w3-display-container w3-padding-16">
             <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-            <h3 class="w3-wide"><b>LOGO</b></h3>
+            <h3 class="w3-wide goHome" th:text="${blogTitle}"
+                th:onclick="|location.href='@{/{blogTitle}(blogTitle=${blogTitle})}'|">
+                LOGO</h3>
         </div>
         <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
-            <a href="#" class="w3-bar-item w3-button" th:each=" blogCategory: ${blogCategories}"
+            <a th:href="@{/{blogTitle}/category/{categoryTitle}(blogTitle=${blogTitle},categoryTitle=${blogCategory.title})}"
+                class="w3-bar-item w3-button" th:each=" blogCategory: ${blogCategories}"
                 th:text="${blogCategory.title}">Shirts</a>
             <hr>
-            <details th:if="${#request.getAttribute('owner')}">
+            <details id="myDetailsMoblie" th:if="${#request.getAttribute('owner')}">
                 <summary class="w3-bar-item w3-button">카테고리 추가</summary>
-                <form th:action="@{{blogTitle}/category/add(blogTitle=${blogTitle})}" method="post">
-                    <div><input type="text" th:field="${blogCategory.title}" class="w3-border"><button type="submit"
-                            class="w3-button" style="padding: 0;">추가</button></div>
+                <form th:action="@{/{blogTitle}/category/add(blogTitle=${blogTitle})}" method="post">
+                    <div><input type="text" th:field="${blogCategory.title}" class="w3-border" autofocus><input
+                            type="text" name="redirectURL" th:value="${#httpServletRequest.requestURI}" hidden><button
+                            type="submit" class="w3-button" style="padding: 0;">추가</button></div>
                 </form>
             </details>
         </div>
-        <a href="#footer" class="w3-bar-item w3-button w3-padding">Contact</a>
+        <div href="#footer" th:text="'일일 방문자 수: '+${blogManager?.visitToday}" class="w3-bar-item w3-padding"></div>
+        <div href="#footer" th:text="'전체 방문자 수: '+${blogManager?.visitTotal}" class="w3-bar-item w3-padding"></div>
     </nav>
     <!-- 왼쪽 카테고리 -->
 
     <nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="z-index:3;width:250px" id="mySidebar">
         <div class="w3-container w3-display-container w3-padding-16">
             <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-            <h3 class="w3-wide"><b>LOGO</b></h3>
+            <h3 class="w3-wide goHome" th:text="${blogTitle}"
+                th:onclick="|location.href='@{/{blogTitle}(blogTitle=${blogTitle})}'|">
+                LOGO</h3>
         </div>
         <div class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
-            <a href="#" class="w3-bar-item w3-button" th:each=" blogCategory: ${blogCategories}"
-                th:text="${blogCategory.title}">Shirts</a>
+            <div th:each=" blogCategory: ${blogCategories}" style="display: flex;">
+                <a th:href="@{/{blogTitle}/category/{categoryTitle}(blogTitle=${blogTitle},categoryTitle=${blogCategory.title})}"
+                    class="w3-bar-item w3-button" th:text="${blogCategory.title}" style="width:70%">Shirts</a>
+                <a class="w3-bar-item w3-button w3-small myDelete"
+                    th:href="@{/{blogTitle}/category/delete/{categoryId}(blogTitle=${blogTitle},categoryId=${blogCategory.id},redirectURL=${#httpServletRequest.requestURI})}"
+                    style="display: none; width: 30%; color: red; text-align: center;" onclick="categoryDel()">삭제</a>
+            </div>
             <hr>
-            <details th:if="${#request.getAttribute('owner')}">
+            <details id="myDetails" th:if="${#request.getAttribute('owner')}">
                 <summary class="w3-bar-item w3-button">카테고리 추가</summary>
-                <form th:action="@{{blogTitle}/category/add(blogTitle=${blogTitle})}" method="post">
-                    <div><input type="text" th:field="${blogCategory.title}" class="w3-border"><button type="submit"
-                            class="w3-button" style="padding: 0;">추가</button></div>
+                <form th:action="@{/{blogTitle}/category/add(blogTitle=${blogTitle})}" method="post">
+                    <div><input type="text" th:field="${blogCategory.title}" class="w3-border" autofocus><input
+                            type="text" name="redirectURL" th:value="${#httpServletRequest.requestURI}" hidden><button
+                            type="submit" class="w3-button" style="padding: 0;">추가</button></div>
                 </form>
             </details>
+            <button class="w3-bar-item w3-button" onclick="show_delete()" th:if="${#request.getAttribute('owner')}">카테고리
+                삭제</button>
         </div>
-        <a href="#footer" class="w3-bar-item w3-button w3-padding">방문자 수</a>
-        <a href="#footer" class="w3-bar-item w3-button w3-padding">일일 방문자 수</a>
+        <div href="#footer" th:text="'일일 방문자 수: '+${blogManager?.visitToday}" class="w3-bar-item w3-padding"></div>
+        <div href="#footer" th:text="'전체 방문자 수: '+${blogManager?.visitTotal}" class="w3-bar-item w3-padding"></div>
     </nav>
 
     <!-- 탑 바-->
     <header class="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
-        <div class="w3-bar-item w3-padding-24 w3-wide">LOGO</div>
+        <div class="w3-bar-item w3-padding-24 w3-wide  goHome" th:text="${blogTitle}"
+            th:onclick="|location.href='@{/{blogTitle}(blogTitle=${blogTitle})}'|">LOGO</div>
         <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding-24 w3-right" onclick="w3_open()"><i
                 class="fa fa-bars"></i></a>
     </header>

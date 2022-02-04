@@ -3,6 +3,7 @@ package com.zanygeek.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,6 +18,8 @@ import com.zanygeek.repository.MemberRepository;
 public final class LoginService {
 	@Autowired
 	MemberRepository memberRepository;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	public static final String USER_COOKIE = "userCookie";
 
@@ -27,11 +30,13 @@ public final class LoginService {
 			result.addError(new FieldError("joinForm", "userId", "일치하는 아이디가 없습니다."));
 			return null;
 		}
-		if (member.get().getPassword().equals(form.getPassword())) {
+		
+		if (passwordEncoder.matches(form.getPassword(), member.get().getPassword())) {
 			loginMember.setId(member.get().getId());
 			loginMember.setBlogManagerId(member.get().getBlogManagerId());
 			return loginMember;
 		} else
+			result.addError(new FieldError("joinForm", "password", "비밀번호가 틀렸습니다."));
 			return null;
 	}
 }

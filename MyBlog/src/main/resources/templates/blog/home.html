@@ -1,28 +1,129 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <title>W3.CSS Template</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-</head>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" th:href="@{/css/w3.css}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" th:href="@{/css/common.css}">
+
 
 <body class="w3-content" style="max-width:1200px">
     <th:block th:replace="/blog/fragment/sidebar.html :: sidebar"></th:block>
     <!-- !PAGE CONTENT! -->
-    <div class="w3-main" style="margin-left:250px; background-color: gray;">
+    <div class="w3-main" style="margin-left:250px; background-color: rgba(0,0,0,.2);">
         <th:block th:replace="/blog/fragment/topbar.html :: topbar"></th:block>
         <th:block th:replace="/blog/fragment/categoryList.html :: categoryList"></th:block>
+        <div class="w3-container w3-small" th:if="${owner}">
+            <hr style="margin:0" />
+            <a class="w3-button w3-right" data-th-if="${category} and ${not #lists.isEmpty(blogCategories)}"
+                th:href="@{/{blogTitle}/content/add(blogTitle=${blogTitle}, blogCategoryId=${category.id})}"
+                target="_top">글
+                쓰기</a>
+            <a class="w3-button w3-right" data-th-if="!${category} and ${not #lists.isEmpty(blogCategories)}"
+                th:href="@{/{blogTitle}/content/add(blogTitle=${blogTitle})}">글
+                쓰기</a>
+            <a class="w3-button w3-right" data-th-if="${#lists.isEmpty(blogCategories)}"
+                onclick="showDetails();showDetailsMobile();" href="#">카테고리
+                추가</a>
+        </div>
     </div>
 
-    <div class="w3-main w3-row w3-grayscale"
-        style="margin-left:250px; background-color: gray; height:400px; margin-top: 4%;">
-        <a href="#" class="w3-bar-item w3-button w3-display-topright" th:if="${owner}">글쓰기</a>
+    <div class="w3-main w3-row" style="margin-left:250px; margin-top: 40px; background-color: rgba(0,0,0,.2);">
+
+        <div class="w3-container container">
+            <th:block data-th-if="${content}!=null">
+                <div class="post" style="min-height:400px;">
+                    <div class=" postHeader">
+                        <div class="postTitle" th:text="'제목 '+${content.title}"></div>
+                        <div class="postCategory" th:text="'|카테고리 '+${content.blogCategory.title}"></div>
+
+                        <div class="postTime" th:text="'작성 일자 '+${content.reportingDate}"></div>
+
+                        <div class="postLocked" th:if="${content.locked}" th:text="'비공개'">
+                        </div>
+                        <hr class="postHr" />
+                        <div class="postView" th:text="'조회수 '+${content.see}"></div>
+                    </div>
+                    <div class="postContent">
+                        <div class="postContentText" th:utext="${content.text}"></div>
+                    </div>
+                    <hr class="postHr">
+                    <div class="post postFooter">
+                        <div class="postEdit">
+                            <a th:href="@{/{blogTitle}/content/edit/{contentId}(blogTitle=${blogTitle},contentId=${content.Id})}"
+                                class="w3-button w3-small" th:if=" ${owner}">글수정</a>
+                            <a th:href="@{/{blogTitle}/content/delete/(blogTitle=${blogTitle},contentId=${content.id})}"
+                                class="w3-button w3-small" th:if="${owner}and!${category}" data-confirm-delete>글삭제</a>
+                            <a th:href="@{/{blogTitle}/content/delete/(blogTitle=${blogTitle},contentId=${content.id},categoryTitle=${content.blogCategory.title})}"
+                                class="w3-button w3-small" th:if="${owner}and${category}" data-confirm-delete>글삭제</a>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+            <th:block data-th-if="${content}==null and ${owner}">
+                <div class="post" style="min-height:400px;">
+                    <div class=" postHeader">
+                        <hr class="postHr" />
+                    </div>
+                    <div class="postContent">
+                        <div class="postContentText">
+                            <div style="text-align: center;"><strong class="pcol1"
+                                    style="font-family: 돋움; font-size: 16px; display: block; margin: 0px 0px 8px;">아직
+                                    작성된 글이 없습니다.</strong>
+                                <p class="pcol2"
+                                    style="margin-bottom: 21px; font-size: 12px; line-height: 17px; font-family: 돋움, dotum;">
+                                    새로운 글을
+                                    작성하여 블로그를 가꾸어 주세요!</p>
+                                <a data-th-if="${category} and ${not #lists.isEmpty(blogCategories)}"
+                                    th:href="@{/{blogTitle}/content/add(blogTitle=${blogTitle}, blogCategoryId=${category.id})}"
+                                    target="_top"
+                                    style="display: inline-block; font-family: 돋움, dotum; font-size: medium; background-color: rgb(255, 255, 255);">글
+                                    쓰기</a>
+                                <a data-th-if="!${category} and ${not #lists.isEmpty(blogCategories)}"
+                                    th:href="@{/{blogTitle}/content/add(blogTitle=${blogTitle})}" target="_top"
+                                    style="display: inline-block; font-family: 돋움, dotum; font-size: medium; background-color: rgb(255, 255, 255);">글
+                                    쓰기</a>
+                                <a data-th-if="${#lists.isEmpty(blogCategories)}"
+                                    onclick="showDetails();showDetailsMobile();" href="#"
+                                    style="display: inline-block; font-family: 돋움, dotum; font-size: medium; background-color: rgb(255, 255, 255);">카테고리
+                                    추가</a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="postHr">
+                    <div class="post postFooter">
+                    </div>
+                </div>
+            </th:block>
+            <th:block data-th-if="${content}==null and !${owner}">
+                <div class="post" style="min-height:400px;">
+                    <div class=" postHeader">
+                        <hr class="postHr" />
+                    </div>
+                    <div class="postContent">
+                        <div class="postContentText">
+                            <div style="text-align: center;"><strong class="pcol1"
+                                    style="font-family: 돋움; font-size: 16px; display: block; margin: 0px 0px 8px;">아직
+                                    작성된 글이 없습니다.</strong>
+                                <p class="pcol2" th:if="!${login}"
+                                    style="margin-bottom: 21px; font-size: 12px; line-height: 17px; font-family: 돋움, dotum;">
+                                    로그인 후 글을 작성할 수 있습니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="postHr">
+                    <div class="post postFooter">
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
     </div>
 
     <script type="text/javascript" th:src="@{/js/functionEditorAndView.js}"></script>

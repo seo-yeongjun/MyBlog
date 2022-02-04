@@ -1,23 +1,28 @@
 package com.zanygeek;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.zanygeek.interceptor.OwnerInterceptor;
+import com.zanygeek.interceptor.BlogInterceptor;
+import com.zanygeek.interceptor.BlogVisitInterceptor;
 
 @Configuration
 public class Config implements WebMvcConfigurer {
+	@Autowired
+	BlogInterceptor blogInterceptor;
+	@Autowired
+	BlogVisitInterceptor blogVisitInterceptor;
+	
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor()).order(1).addPathPatterns("/*/content/**","/*/categoty/**").excludePathPatterns("/css/**",
-				"/", "/members/add", "/login", "/logout", "/*.ico", "/error","/api/item/*","/error/**","/error-page/**");
+		registry.addInterceptor(blogInterceptor).order(1).addPathPatterns("/**").excludePathPatterns("/css/**",
+				"/js/**", "/", "/member/**", "/login", "/logout", "/*.ico", "/error", "/api/item/*", "/error/**",
+				"/error-page/**","/images/**","/image","/test/test");
+		registry.addInterceptor(blogVisitInterceptor).order(2).addPathPatterns("/**").excludePathPatterns("/error",
+				"/", "/member/**", "/*.ico", "/*/content/edit/**", "/*/content/add", "/css/**", "/js/**", "/login",
+				"/logout","/images/**","/image","/test/test");
 	}
-
-	@Bean
-    public OwnerInterceptor authInterceptor(){
-    	return new OwnerInterceptor();
-    }
 }

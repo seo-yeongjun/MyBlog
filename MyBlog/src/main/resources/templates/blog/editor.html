@@ -1,50 +1,127 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <title>W3.CSS Template</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
-    <!-- include summernote css/js-->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
-    <!-- include summernote-ko-KR -->
-    <script th:src="@{/js/summernote-ko-KR.js}"></script>
-    <link rel="stylesheet" th:href="@{/css/common.css}">
-</head>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" th:href="@{/css/w3.css}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
+<!-- include summernote css/js-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
+<!-- include summernote-ko-KR -->
+<script th:src="@{/js/summernote-ko-KR.js}"></script>
+<link rel="stylesheet" th:href="@{/css/common.css}">
 
 <body class="w3-content" style="max-width:1200px">
     <th:block th:replace="/blog/fragment/sidebar.html :: sidebar"></th:block>
 
     <!-- !PAGE CONTENT! -->
-    <div class="w3-main" style="margin-left:250px; background-color: gray;">
+    <div class="w3-main" style="margin-left:250px; background-color: rgba(0,0,0,.2);">
         <th:block th:replace="/blog/fragment/topbar.html :: topbar"></th:block>
         <th:block th:replace="/blog/fragment/categoryList.html :: categoryList"></th:block>
     </div>
-
-    <div class="w3-main w3-row w3-grayscale"
-        style="margin-left:250px; background-color: gray; height:400px; margin-top: 4%;">
+    <div class="w3-main w3-row" style="margin-left:250px; margin-top: 20px; background-color: rgba(0,0,0,.2);">
         <form method="post" th:object="${blogContent}" th:action="@{/{blogTitle}/content/add(blogTitle=${blogTitle})}">
-            <select th:field="*{blogCategoryId}">
-                <option th:each=" blogCategory: ${blogCategories}" th:text="${blogCategory.title}"
-                    th:value="${blogCategory.id}"></option>
-            </select>
-            <input type="text" name="title" th:field="*{title}">
-            <textarea id="summernote" name="text" th:field="*{text}"></textarea>
-            <input type="button" onclick="goWrite(this.form)">
+            <input type="text" name="title" th:field="*{id}" hidden>
+            <div style="display: flex;">
+                <p style="margin-left:20px; padding-top: 5px; margin-right:15px;">카테고리</p>
+                <select name="blogCategory.id">
+                    <option th:each=" blogCategory: ${blogCategories}" th:text="${blogCategory.title}"
+                        th:value="${blogCategory.id}" th:selected="${#strings.equals(blogCategory.id,blogCategoryId)}">
+                    </option>
+                </select>
+                <p style="margin-left:20px; padding-top: 5px; margin-right:15px;">공개 여부</p>
+                <select th:field="*{locked}">
+                    <option th:text="'공개'" th:value="false" th:selected="*{locked==false}">
+                    </option>
+                    <option th:text="'비공개'" th:value="true" th:selected="*{locked==true}">
+                    </option>
+                </select>
+            </div>
+            <div style="display: flex;">
+                <p style="margin-left:20px; padding-top: 5px; margin-right:40px;">제목</p><input type="text" name="title"
+                    th:field="*{title}">
+                <input type="text" name="blogTitle" th:field="*{blogTitle}" th:value="${blogTitle}" hidden>
+            </div>
+            <input type="text" name="see" th:field="*{see}" th:value="*{see}" hidden>
+            <textarea class="summernote" id="summernote" name="text" th:field="*{text}"></textarea>
+            <span>남은 입력 수: </span> <span id="maxContentPost"></span>
+            <input name="saveBtn" class="button btn-2" style="width: 100%;" type="button" value="저장"
+                onclick="goWrite(this.form)">
         </form>
     </div>
 
     <script type="text/javascript" th:src="@{/js/functionEditorAndView.js}"></script>
+    <script>
+        function registerSummernote(element, placeholder, max, callbackMax) {
+            $(element).summernote({
+                maximumImageFileSize: 5242880,
+                dialogInBody: true,
+                placeholder: '내용을 작성하세요',
+                height: 400,
+                callbacks: {
+                    onKeydown: function (e) {
+                        var t = e.currentTarget.innerText;
+                        if (t.length >= max) {
+                            //delete key
+                            if (e.keyCode != 8)
+                                e.preventDefault();
+                            // add other keys ...
+                        }
+                    },
+                    onKeyup: function (e) {
+                        var t = e.currentTarget.innerText;
+                        if (typeof callbackMax == 'function') {
+                            callbackMax(max - t.length);
+                        }
+                    },
+                    onPaste: function (e) {
+                        var t = e.currentTarget.innerText;
+                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                        e.preventDefault();
+                        var all = t + bufferText;
+                        document.execCommand('insertText', false, all.trim().substring(0, 4000));
+                        if (typeof callbackMax == 'function') {
+                            callbackMax(max - t.length);
+                        }
+                    }
+                }
+            });
+        }
 
 
+        $(function () {
+            registerSummernote('.summernote', 'Leave a comment', 4000, function (max) {
+                $('#maxContentPost').text(max)
+            });
+        });
+
+
+        function goWrite(frm) {
+            var title = frm.title.value;
+            var text = frm.text.value;
+            var leng = document.getElementById('maxContentPost').textContent;
+            if (title.trim() == '') {
+                alert("제목을 입력해주세요");
+                return false;
+            }
+            if (text.trim() == '') {
+                alert("본문을 입력해주세요");
+                return false;
+            }
+            if (leng < 0) {
+                alert("너무 깁니다.");
+                return false;
+            }
+            frm.submit();
+        }
+    </script>
 </body>
 
 </html>

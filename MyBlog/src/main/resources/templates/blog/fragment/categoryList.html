@@ -1,36 +1,56 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="categoryList">
-    <header class="w3-container w3-large">
-        <p class="w3-left">카테고리 이름</p>
-        <p class="w3-right">
-            <input type="text" class="w3-border">
-            <i class="fa fa-search"></i>
-        </p>
+    <header class="w3-container">
+        <p class="w3-left" th:text="${category != null}?'카테고리: '+${category.title}:'카테고리: All Contents'">카테고리 이름</p>
+        <form th:action="@{/{blogTitle}/search(blogTitle=${blogTitle})}" method="get" class="w3-right"
+            style="margin-block-start: 0.6em;margin-block-end: 1em;margin-inline-start: 0px;margin-inline-end: 0px;">
+            <input type="text" name="contentTitle" id="contentTitle" placeholder="  제목의 일부로 검색" class="w3-border">
+            <button type="submit" class="fa fa-search" style="background: none; border: none;"></button>
+        </form>
+
+
     </header>
 
     <body>
-        <div>
-            <div class="w3-row w3-grayscale" style="display:flex;">
-                <div class="w3-col l3 s6 w3-content w3-display-container" style="width: 100%;">
+        <div class="w3-row w3-grayscale" style="display:flex;">
+            <div class="w3-col l3 s6 w3-content w3-display-container" style="width: 100%;">
+                <th:block th:each=" num1: ${#numbers.sequence(0,contents.size-1,3)}" th:if="${category}">
                     <div class="mySlides" style="text-align: center; vertical-align: middle;">
-                        <div class="w3-container" style=" display: inline-block; width: 30%;">
-                            <img src="https://i.ytimg.com/vi/9aDke7HDqfs/maxresdefault.jpg" style="width: 100%;">
-                            <p>Ripped Skinny Jeans<br><b>$24.99</b></p>
-                        </div>
-                        <div class="w3-container" style=" display: inline-block; width: 30%;">
-                            <img src="https://i.ytimg.com/vi/9aDke7HDqfs/maxresdefault.jpg" style="width: 100%;">
-                            <p>Ripped Skinny Jeans<br><b>$24.99</b></p>
-                        </div>
-                        <div class="w3-container" style=" display: inline-block; width: 30%;">
-                            <img src="https://i.ytimg.com/vi/9aDke7HDqfs/maxresdefault.jpg" style="width: 100%;">
-                            <p>Ripped Skinny Jeans<br><b>$24.99</b></p>
-                        </div>
+                        <th:block th:each=" num2: ${#numbers.sequence(1,3)}">
+                            <div class="w3-container w3-button" style=" display: inline-block; width: 32%;"
+                                th:if="${num1+num2-1}<${#lists.size(contents)}" th:with="i=${num1+num2-1}">
+                                <div th:each="contentC,idx:${contents}" th:if="${idx.index}==${i}"
+                                    th:onclick="|location.href='@{/{blogTitle}/category/{categoryTitle}/{contentId}(blogTitle=${blogTitle},categoryTitle=${contentC.categoryTitle},contentId=${contentC.id})}'|">
+                                    <img src="https://source.unsplash.com/random" style="width: 272px; height: 153px;">
+                                    <p th:text="${contentC.title}" style="color: white; font-size: 19px;"
+                                        th:if="${contentC.id==content.id}" th:id="num" th::num="${idx.index/3}"></p>
+                                    <p th:text="${contentC.title}" th:if="!${contentC.id==content.id}"></p>
+                                </div>
+                            </div>
+                        </th:block>
                     </div>
-                </div>
-                <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
-                <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+                </th:block>
+                <th:block th:each=" num1: ${#numbers.sequence(0,contents.size-1,3)}" th:if="!${category}">
+                    <div class="mySlides" style="text-align: center; vertical-align: middle;">
+                        <th:block th:each=" num2: ${#numbers.sequence(1,3)}">
+                            <div class="w3-container w3-button" style=" display: inline-block; width: 32%;"
+                                th:if="${num1+num2-1}<${#lists.size(contents)}" th:with="i=${num1+num2-1}">
+                                <div th:each="contentC,idx:${contents}" th:if="${idx.index}==${i}"
+                                    th:onclick="|location.href='@{/{blogTitle}(blogTitle=${blogTitle},contentId=${contentC.id})}'|">
+                                    <img src="https://source.unsplash.com/random" style="width: 272px; height: 153px;">
+                                    <p th:text="${contentC.title}" style="color: white; font-size: 19px;"
+                                        th:if="${contentC.id==content.id}" th:id="num" th::num="${idx.index/3}"></p>
+                                    <p th:text="${contentC.title}" th:if="!${contentC.id==content.id}"></p>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </th:block>
             </div>
-
+            <button th:if="${#lists.size(contents)>3}" class=" w3-button w3-black w3-display-left"
+                style="padding: 4px 12px;" onclick="plusDivs(-1)">&#10094;</button>
+            <button th:if="${#lists.size(contents)>3}" class="w3-button w3-black w3-display-right"
+                style="padding: 4px 12px;" onclick="plusDivs(1)">&#10095;</button>
         </div>
     </body>
 </th:block>
