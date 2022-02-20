@@ -1,14 +1,5 @@
 package com.zanygeek.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.zanygeek.entity.BlogContent;
 import com.zanygeek.entity.BlogManager;
 import com.zanygeek.entity.VisitIp;
@@ -16,6 +7,14 @@ import com.zanygeek.repository.BlogManagerRepository;
 import com.zanygeek.repository.VisitIpRepository;
 import com.zanygeek.service.BlogContentService;
 import com.zanygeek.service.BlogVisitService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class BlogVisitInterceptor implements HandlerInterceptor {

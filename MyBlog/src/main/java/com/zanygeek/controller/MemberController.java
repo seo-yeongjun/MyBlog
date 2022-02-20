@@ -1,8 +1,9 @@
 package com.zanygeek.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
+import com.zanygeek.form.JoinForm;
+import com.zanygeek.repository.BlogManagerRepository;
+import com.zanygeek.repository.MemberRepository;
+import com.zanygeek.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,10 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zanygeek.form.JoinForm;
-import com.zanygeek.repository.BlogManagerRepository;
-import com.zanygeek.repository.MemberRepository;
-import com.zanygeek.service.MemberService;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 @Controller
 @RequestMapping("member")

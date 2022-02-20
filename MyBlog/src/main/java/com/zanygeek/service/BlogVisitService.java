@@ -1,20 +1,21 @@
 package com.zanygeek.service;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.zanygeek.repository.VisitIpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.zanygeek.repository.VisitIpRepository;
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 @EnableScheduling
 public final class BlogVisitService {
 @Autowired
 VisitIpRepository visitIpRepository;
-
+/*
+	생략
+	*/
 	public String getIp(HttpServletRequest request) {
 
 		String ip = request.getHeader("X-Forwarded-For");
@@ -37,12 +38,11 @@ VisitIpRepository visitIpRepository;
 		return ip;
 
 	}
-	
-	@Scheduled(fixedDelay = 5000)
-	//cron="0 0 00 * * ?"
+
+	//일일 방문 아이피 삭제, 일일 방문자 수 0으로
+	@Scheduled(cron = "0 0 0 * * ?")
 	public void reSet() {
 		visitIpRepository.deleteAll();
 		visitIpRepository.resetToday();
-		System.out.println("초기화");
 	}
 }

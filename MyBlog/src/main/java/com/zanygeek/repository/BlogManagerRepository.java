@@ -1,11 +1,10 @@
 package com.zanygeek.repository;
 
-import java.util.Optional;
-
+import com.zanygeek.entity.BlogManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.zanygeek.entity.BlogManager;
+import java.util.Optional;
 
 @Repository
 public interface BlogManagerRepository extends JpaRepository<BlogManager, Integer> {

@@ -1,20 +1,18 @@
 package com.zanygeek.interceptor;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.zanygeek.entity.BlogManager;
+import com.zanygeek.entity.LoginMember;
+import com.zanygeek.repository.BlogManagerRepository;
+import com.zanygeek.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.zanygeek.entity.BlogManager;
-import com.zanygeek.entity.LoginMember;
-import com.zanygeek.repository.BlogManagerRepository;
-import com.zanygeek.service.LoginService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @Component
 public class OwnerInterceptor implements HandlerInterceptor {

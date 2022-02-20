@@ -1,13 +1,11 @@
 package com.zanygeek.form;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotBlank;
-
 import com.zanygeek.entity.BlogManager;
 import com.zanygeek.entity.Member;
-
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 @Data
 public class JoinForm {

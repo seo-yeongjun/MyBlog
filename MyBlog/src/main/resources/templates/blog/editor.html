@@ -19,109 +19,133 @@
 <link rel="stylesheet" th:href="@{/css/common.css}">
 
 <body class="w3-content" style="max-width:1200px">
-    <th:block th:replace="/blog/fragment/sidebar.html :: sidebar"></th:block>
+<th:block th:replace="/blog/fragment/sidebar.html :: sidebar"></th:block>
 
-    <!-- !PAGE CONTENT! -->
-    <div class="w3-main" style="margin-left:250px; background-color: rgba(0,0,0,.2);">
-        <th:block th:replace="/blog/fragment/topbar.html :: topbar"></th:block>
-        <th:block th:replace="/blog/fragment/categoryList.html :: categoryList"></th:block>
-    </div>
-    <div class="w3-main w3-row" style="margin-left:250px; margin-top: 20px; background-color: rgba(0,0,0,.2);">
-        <form method="post" th:object="${blogContent}" th:action="@{/{blogTitle}/content/add(blogTitle=${blogTitle})}">
-            <input type="text" name="title" th:field="*{id}" hidden>
-            <div style="display: flex;">
-                <p style="margin-left:20px; padding-top: 5px; margin-right:15px;">카테고리</p>
-                <select name="blogCategory.id">
-                    <option th:each=" blogCategory: ${blogCategories}" th:text="${blogCategory.title}"
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:250px; background-color: rgba(0,0,0,.2);">
+    <th:block th:replace="/blog/fragment/topbar.html :: topbar"></th:block>
+    <th:block th:replace="/blog/fragment/categoryList.html :: categoryList"></th:block>
+</div>
+<div class="w3-main w3-row" style="margin-left:250px; margin-top: 20px; background-color: rgba(0,0,0,.2);">
+    <form method="post" th:object="${blogContent}" th:action="@{/{blogTitle}/content/add(blogTitle=${blogTitle})}"
+          enctype="multipart/form-data">
+        <input type="text" name="title" th:field="*{id}" hidden>
+        <div style="display: flex;">
+            <p style="margin-left:20px; padding-top: 5px; margin-right:15px;">카테고리</p>
+            <select name="blogCategory.id">
+                <option th:each=" blogCategory: ${blogCategories}" th:text="${blogCategory.title}"
                         th:value="${blogCategory.id}" th:selected="${#strings.equals(blogCategory.id,blogCategoryId)}">
-                    </option>
-                </select>
-                <p style="margin-left:20px; padding-top: 5px; margin-right:15px;">공개 여부</p>
-                <select th:field="*{locked}">
-                    <option th:text="'공개'" th:value="false" th:selected="*{locked==false}">
-                    </option>
-                    <option th:text="'비공개'" th:value="true" th:selected="*{locked==true}">
-                    </option>
-                </select>
-            </div>
-            <div style="display: flex;">
-                <p style="margin-left:20px; padding-top: 5px; margin-right:40px;">제목</p><input type="text" name="title"
-                    th:field="*{title}">
-                <input type="text" name="blogTitle" th:field="*{blogTitle}" th:value="${blogTitle}" hidden>
-            </div>
-            <input type="text" name="see" th:field="*{see}" th:value="*{see}" hidden>
-            <textarea class="summernote" id="summernote" name="text" th:field="*{text}"></textarea>
-            <span>남은 입력 수: </span> <span id="maxContentPost"></span>
-            <input name="saveBtn" class="button btn-2" style="width: 100%;" type="button" value="저장"
-                onclick="goWrite(this.form)">
-        </form>
-    </div>
+                </option>
+            </select>
+            <p style="margin-left:20px; padding-top: 5px; margin-right:15px;">공개 여부</p>
+            <select th:field="*{locked}">
+                <option th:text="'공개'" th:value="false" th:selected="*{locked==false}">
+                </option>
+                <option th:text="'비공개'" th:value="true" th:selected="*{locked==true}">
+                </option>
+            </select>
+        </div>
+        <div style="display: flex;">
+            <p style="margin-left:20px; padding-top: 5px; margin-right:40px;">제목</p><input type="text" name="title"
+                                                                                           th:field="*{title}">
+            <input type="text" name="blogTitle" th:field="*{blogTitle}" th:value="${blogTitle}" hidden>
+        </div>
+        <input type="text" name="see" th:field="*{see}" th:value="*{see}" hidden>
+        <textarea class="summernote" id="summernote" name="text" th:field="*{text}"></textarea>
+        <ul>
+            <li>썸네일 <input type="file" name="thumbnail1" accept="image/*"></li>
+            <li>첨부파일 <input type="file" name="uploadFiles1" multiple="multiple"></li>
+        </ul>
+        <span>남은 입력 수: </span> <span id="maxContentPost"></span>
+        <input name="saveBtn" class="button btn-2" style="width: 100%;" type="button" value="저장"
+               onclick="goWrite(this.form)">
+    </form>
+</div>
 
-    <script type="text/javascript" th:src="@{/js/functionEditorAndView.js}"></script>
-    <script>
-        function registerSummernote(element, placeholder, max, callbackMax) {
-            $(element).summernote({
-                maximumImageFileSize: 5242880,
-                dialogInBody: true,
-                placeholder: '내용을 작성하세요',
-                height: 400,
-                callbacks: {
-                    onKeydown: function (e) {
-                        var t = e.currentTarget.innerText;
-                        if (t.length >= max) {
-                            //delete key
-                            if (e.keyCode != 8)
-                                e.preventDefault();
-                            // add other keys ...
-                        }
-                    },
-                    onKeyup: function (e) {
-                        var t = e.currentTarget.innerText;
-                        if (typeof callbackMax == 'function') {
-                            callbackMax(max - t.length);
-                        }
-                    },
-                    onPaste: function (e) {
-                        var t = e.currentTarget.innerText;
-                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
-                        e.preventDefault();
-                        var all = t + bufferText;
-                        document.execCommand('insertText', false, all.trim().substring(0, 4000));
-                        if (typeof callbackMax == 'function') {
-                            callbackMax(max - t.length);
-                        }
+<script type="text/javascript" th:src="@{/js/functionEditorAndView.js}"></script>
+<script>
+    function registerSummernote(element, placeholder, max, callbackMax) {
+        $(element).summernote({
+            maximumImageFileSize: 5242880,
+            dialogInBody: true,
+            placeholder: '내용을 작성하세요',
+            height: 400,
+            callbacks: {
+                onKeydown: function (e) {
+                    var t = e.currentTarget.innerText;
+                    if (t.length >= max) {
+                        //delete key
+                        if (e.keyCode != 8)
+                            e.preventDefault();
+                        // add other keys ...
+                    }
+                },
+                onKeyup: function (e) {
+                    var t = e.currentTarget.innerText;
+                    if (typeof callbackMax == 'function') {
+                        callbackMax(max - t.length);
+                    }
+                },
+                onPaste: function (e) {
+                    var t = e.currentTarget.innerText;
+                    var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
+                    e.preventDefault();
+                    var all = t + bufferText;
+                    document.execCommand('insertText', false, all.trim().substring(0, 4000));
+                    if (typeof callbackMax == 'function') {
+                        callbackMax(max - t.length);
                     }
                 }
-            });
-        }
-
-
-        $(function () {
-            registerSummernote('.summernote', 'Leave a comment', 4000, function (max) {
-                $('#maxContentPost').text(max)
-            });
+            }
         });
+    }
 
 
-        function goWrite(frm) {
-            var title = frm.title.value;
-            var text = frm.text.value;
-            var leng = document.getElementById('maxContentPost').textContent;
-            if (title.trim() == '') {
-                alert("제목을 입력해주세요");
-                return false;
-            }
-            if (text.trim() == '') {
-                alert("본문을 입력해주세요");
-                return false;
-            }
-            if (leng < 0) {
-                alert("너무 깁니다.");
-                return false;
-            }
-            frm.submit();
+    $(function () {
+        registerSummernote('.summernote', 'Leave a comment', 4000, function (max) {
+            $('#maxContentPost').text(max)
+        });
+    });
+    $("input[type=file]").bind( 'change', function (e)
+    {
+        if( !$(this).val() ) return;
+
+        var f = this.files[0];
+        var size = f.size || f.fileSize;
+
+        var limit = 10000000;
+
+        //alert( id + ' / ' + limit );
+
+        if( size > limit )
+        {
+            alert( '파일용량은 10mb 를 넘을수 없습니다.' );
+            $(this).val('');
+            return;
         }
-    </script>
+
+        $(this).parent().find('input[type=text]').val( $(this).val() );
+    })
+
+    function goWrite(frm) {
+        var title = frm.title.value;
+        var text = frm.text.value;
+        var leng = document.getElementById('maxContentPost').textContent;
+        if (title.trim() == '') {
+            alert("제목을 입력해주세요");
+            return false;
+        }
+        if (text.trim() == '') {
+            alert("본문을 입력해주세요");
+            return false;
+        }
+        if (leng < 0) {
+            alert("너무 깁니다.");
+            return false;
+        }
+        frm.submit();
+    }
+</script>
 </body>
 
 </html>
