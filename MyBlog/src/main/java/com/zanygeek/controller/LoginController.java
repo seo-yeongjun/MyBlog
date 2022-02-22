@@ -39,8 +39,6 @@ public class LoginController {
 		}
 		HttpSession session = request.getSession();
 		session.setAttribute(LoginService.USER_COOKIE, loginMember);
-		session.setAttribute("test", "ok");
-		System.out.println(session);
 		String title = blogManagerRepository.findById(loginMember.getBlogManagerId()).get().getTitle();
 		title = URLEncoder.encode(title, "UTF-8");
 		title =title.replaceAll("[+]", "%20");

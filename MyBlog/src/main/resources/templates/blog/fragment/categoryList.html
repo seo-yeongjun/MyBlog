@@ -20,7 +20,7 @@
                         <div class="w3-container w3-button" style=" display: inline-block; width: 32%;"
                              th:if="${num1+num2-1}<${#lists.size(contents)}" th:with="i=${num1+num2-1}">
                             <div th:each="contentC,idx:${contents}" th:if="${idx.index}==${i}"
-                                 th:onclick="|location.href='@{/{blogTitle}/category/{categoryTitle}/{contentId}(blogTitle=${blogTitle},categoryTitle=${contentC.categoryTitle},contentId=${contentC.id})}'|">
+                                 th:onclick="|location.href='@{/{blogTitle}/category/{categoryTitle}/{contentId}(blogTitle=${blogTitle},categoryTitle=${contentC.blogCategory.title},contentId=${contentC.id})}'|">
                                 <img th:src="@{/thumbnail/{thumbnail}(thumbnail=${contentC.thumbnail.storeFileName})}"
                                      th:if="${contentC.thumbnail}!=null" style="width: 272px; height: 153px;">
                                 <div th:unless="${contentC.thumbnail}!=null"

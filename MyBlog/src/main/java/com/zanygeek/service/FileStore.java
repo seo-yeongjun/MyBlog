@@ -39,7 +39,6 @@ public class FileStore {
         String storeFileName = createStoreFileName(uploadFileName);
 
         multipartFile.transferTo(new File(getFullPath(storeFileName)));
-        System.out.println(getFullPath(storeFileName));
 
         return new Thumbnail(uploadFileName, storeFileName, blogContentId);
     }
@@ -64,5 +63,23 @@ public class FileStore {
     private String extracted(String uploadFileName) {
         int pos = Objects.requireNonNull(uploadFileName).lastIndexOf('.');
         return uploadFileName.substring(pos);
+    }
+
+    public boolean deleteFile(String storeFileName){
+        File file = new File(getFullPath(storeFileName));
+        if(file.exists()){
+            return file.delete();
+        }else return false;
+    }
+
+    public boolean deleteFiles(List<UploadFile> uploadFiles){
+        boolean rt=false;
+        for(UploadFile u :uploadFiles){
+            File file = new File(getFullPath(u.getStoreFileName()));
+            if(file.exists()){
+                rt = file.delete();
+            }
+        }
+        return rt;
     }
 }

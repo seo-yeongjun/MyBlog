@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -166,13 +167,24 @@ public class HomeController {
         blogTitle = blogTitle.replaceAll("[+]", "%20");
         content.setMember(memberRepository.findById(loginMember.getId()).get());
         content.setReportingDate(new Date());
-        content = blogContentRepository.save(blogContent);
-        int id = content.getId();
-        List<UploadFile> uploadFiles = fileStore.storeFiles(uploadFiles1, id);
-        Thumbnail thumbnail = fileStore.storeThumbnail(thumbnail1, id);
-        uploadFileRepository.saveAll(uploadFiles);
-        if (thumbnail != null)
+        if (blogContent.getId() == 0) {
+            content = blogContentRepository.save(blogContent);
+            int id = content.getId();
+            Thumbnail thumbnail = fileStore.storeThumbnail(thumbnail1, id);
+            if (thumbnail != null)
+                thumbnailRepository.save(thumbnail);
+        } else if (!thumbnail1.isEmpty()) {
+            Thumbnail thumbnail = fileStore.storeThumbnail(thumbnail1, content.getId());
+            content = blogContentRepository.getById(blogContent.getId());
+            if (content.getThumbnail() != null){
+                thumbnailRepository.deleteById(content.getThumbnail().getId());
+                fileStore.deleteFile(content.getThumbnail().getStoreFileName());
+            }
             thumbnailRepository.save(thumbnail);
+            blogContentRepository.save(blogContent);
+        }
+        List<UploadFile> uploadFiles = fileStore.storeFiles(uploadFiles1, content.getId());
+        uploadFileRepository.saveAll(uploadFiles);
         return "redirect:/" + blogTitle;
     }
 
@@ -180,6 +192,8 @@ public class HomeController {
     public String deleteContent(@PathVariable String blogTitle, @RequestParam(required = false) String categoryTitle,
                                 @RequestParam int contentId, HttpServletRequest request) throws UnsupportedEncodingException {
         if ((boolean) request.getAttribute("owner") && request.getAttribute("owner") != null) {
+            BlogContent content = blogContentRepository.getById(contentId);
+            fileStore.deleteFiles(content.getUploadFiles());
             thumbnailRepository.deleteAllByTblogContentId(contentId);
             uploadFileRepository.deleteAllByBlogContentId(contentId);
             blogContentRepository.deleteById(contentId);
@@ -200,11 +214,5 @@ public class HomeController {
     public Resource getImageWithMediaType(@PathVariable String thumbnail) throws MalformedURLException {
         return new UrlResource("file:" + fileStore.getFullPath(thumbnail));
     }
-/*
-	@ResponseBody
-	@GetMapping("/images/{filename}")
-	public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
-		return new UrlResource("file:" + imageStore.getFullPath(filename));
-	}
-*/
+
 }
